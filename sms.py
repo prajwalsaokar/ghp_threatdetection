@@ -2,9 +2,8 @@ import os
 from twilio.rest import Client
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-from dotenv import load_dotenv
+import rpi
 
-load_dotenv()
 account_sid = os.environ['TWILIO_ACCOUNT_SID']
 auth_token = os.environ['TWILIO_AUTH_TOKEN']
 client = Client(account_sid, auth_token)
@@ -23,13 +22,16 @@ def notify(image_path):
 def receive_sms():
     resp = MessagingResponse()
     inbound_message = request.form.get("Body")
-    if inbound_message == "Yes" or "yes" or "y":
+    if inbound_message == "Yes" or "yes" or "y" or "lockdown":
         resp.message("Lockdown initiated")
-    elif inbound_message == "No" or "no" or "n":
+        rpi.lockdown()
+    elif inbound_message == "No" or "no" or "n" or "unlock":
         resp.message("Lockdown canceled")
+        rpi.unlock()
     else:
         resp.message("Please enter an accepted command")
     return str(resp)
+
 
 
 
