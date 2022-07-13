@@ -4,6 +4,8 @@ from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 import rpi
+from flask_ngrok import run_with_ngrok
+
 
 load_dotenv()
 
@@ -13,6 +15,7 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 client = Client(account_sid, auth_token)
 
 app = Flask(__name__)
+run_with_ngrok(app)
 
 def notify(image_path):
     message = client.messages \
@@ -36,9 +39,8 @@ def receive_sms():
         resp.message("Please enter an accepted command")
     return str(resp)
 
-
-
-
+if __name__ == "__main__":
+  app.run()
 
 
 
